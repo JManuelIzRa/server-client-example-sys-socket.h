@@ -78,21 +78,24 @@ int main(int argc, char**argv)
 
     printf("Server listening..\n"); 
 
+    clilen = sizeof(cli_addr);
+
+    //The accept() function will write the connecting client's address info into the address structure.´
+    //The accept() function returns a new socket file descriptor for the accepted connection, so the original ssocket can continue to be used for accepting new connections
+
+    newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &clilen);
+
+    if(newsockfd < 0)
+    {
+    error("Error on accept");
+    }
+
+    printf("Server: got connection from %s port %d\n", inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+
+
     while (1)
     {
-        clilen = sizeof(cli_addr);
-
-        //The accept() function will write the connecting client's address info into the address structure.´
-        //The accept() function returns a new socket file descriptor for the accepted connection, so the original ssocket can continue to be used for accepting new connections
-
-        newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &clilen);
-
-        if(newsockfd < 0)
-        {
-        error("Error on accept");
-        }
-
-        printf("Server: got connection from %s port %d\n", inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+        
 
         //The send() function send the 13 bytes of the string to the new socket
         send(newsockfd, "Hello World!!\n", 13, 0);
