@@ -1,4 +1,4 @@
-# server-client-example-sys-socket.h
+# Server/client example using <sys-socket.h>
 A TCP server/client example using sys/socket.h
 
 ## Summary
