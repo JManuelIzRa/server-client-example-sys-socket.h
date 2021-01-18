@@ -7,13 +7,22 @@
 
 #include <sys/types.h>
 
-int main()
+int main(int argc, char**argv)
 {
+    
+    if(argc!=2)
+    {
+        perror("Fallo en la linea de argumentos.");
+        exit(EXIT_FAILURE);
+    }
+    
+    int port_number = atoi(argv[1]);
+    
     struct sockaddr_in direccionServidor;
 
     direccionServidor.sin_family=AF_INET;
     direccionServidor.sin_addr.s_addr=INADDR_ANY;
-    direccionServidor.sin_port=htons(8080);
+    direccionServidor.sin_port=htons(port_number);
 
     int servidor = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -42,9 +51,6 @@ int main()
 
     printf("Recibi una conexion en %d!!\n", cliente);
 
-    send(cliente, "Hola NetCat", 13, 0);
-    send(cliente, ":)", 3, 0);
-
     /*char * buffer = malloc(5);
 
     int bytesRecibidos = recv(cliente, buffer, 4, 0);//recv(cliente, buffer, 4, MSG_WAITALL); No recive el mensaje hasta que el buffer no este lleno
@@ -70,9 +76,11 @@ Esto sirve cuando sabemos el tamaño del paquete que vamos a recibir*/
     recv(cliente, buffer, tamañoPaquete, MSG_WAITALL);*/
 
     char* buffer = malloc(256);
-int n;
+    int n;
 
-    while(1)
+    send(cliente, "Welcome to the server!!\nType Exit to stop the connection\nType your message:\n", 78, 0);
+
+    while(strcmp(buffer,"Exit")!=0)
     {
         bzero(buffer, 256);
         /*int bytesRecibidos = recv(cliente, buffer, 1000,0);
@@ -98,6 +106,10 @@ int n;
     }
     
     free(buffer);
+
+    close(cliente);
+
+    close(servidor);
 
     return 0;
 }
