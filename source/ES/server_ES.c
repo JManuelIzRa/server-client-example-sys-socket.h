@@ -99,17 +99,41 @@ Esto sirve cuando sabemos el tamaño del paquete que vamos a recibir*/
         //Error control
         if(n < 0)
         {
-            perror("Error reading from socket");
+            perror("Error leyendo del socket");
         }
 
-        printf("Here is the message: %s\n", buffer);
+        printf("Este es el mensaje: %s\n", buffer);
+
+        if(strcmp(buffer,"Exit")==0)
+        {
+           n = write(cliente, "Finalizando conexion...\n",26);
+        }
+        else
+        {
+            n = write(cliente, "Recibido\n", 11);
+        }
+
+        if(n < 0)
+        {
+            perror("Error escribiendo al socket");
+        }
+
+        //send(cliente,"Recibido\n",11,0);
     }
     
     free(buffer);
 
-    close(cliente);
+    if(close(cliente)!=0)
+    {
+        perror("Socket cliente cerrado incorrectamente.");
+        exit(EXIT_FAILURE);
+    }
 
-    close(servidor);
+    if(close(servidor)!=0)
+    {
+        perror("Socket servidor cerrado incorrectamente.");
+        exit(EXIT_FAILURE);
+    }
 
     return 0;
 }

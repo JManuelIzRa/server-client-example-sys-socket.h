@@ -44,15 +44,33 @@ int main(int argc, char**argv)
     //End of error control
 
     printf("%s", buffer);
-
-    while(1)
+    
+    char mensaje[1000];
+    
+    while(strcmp(mensaje,"Exit")!=0)
     {
-        char mensaje[1000];
+        bzero(buffer, 256);
 
         scanf("%s", mensaje);
 
         send(cliente, mensaje, strlen(mensaje),0);
+
+
+        n = read(cliente, buffer, 255);
+
+        //Error control
+        if(n < 0)
+        {
+           perror("ERROR reading from socket");
+        }
+        //End of error control
+
+        printf("%s", buffer);
+
     }
+
+
+    close(cliente);
 
     return 0;
 
