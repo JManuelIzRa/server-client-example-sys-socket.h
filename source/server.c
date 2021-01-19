@@ -88,21 +88,21 @@ int main(int argc, char**argv)
 
     buffer[bytesRecibidos] = '\0';
 
-    printf("Me llegaron %d bytes con %s\n", bytesRecibidos, buffer);
+    printf("Me llegaron %d bytes con %s\n", bytesRecibidos, buffer);*/
 
  
     //This block commented is an example of how to recieve messages from the client when we DONT know the size of the package sent
     //Este bloque comentado es una ejemplo de como recivir mensajes del cliente cuando NO sabemos el tamaño de paquete enviado
- /*  
-    uint32_t package_size;
+ 
+ /* uint32_t package_size;
     recv(client, &package_size, 4, 0);
 
     char*buffer = malloc(package_size);
 
-    recv(client, buffer, package_size, MSG_WAITALL);
-*/
+    recv(client, buffer, package_size, MSG_WAITALL);*/
   
-    //uint32_t package_size; //Uncomment this if you want to use recv(). Descomenta esto si quieres usar recv()
+    //Uncomment this if you want to use recv(). Descomenta esto si quieres usar recv()
+    //uint32_t package_size; 
     //char* buffer = malloc(package_size);
 
     char*buffer = malloc(1024);

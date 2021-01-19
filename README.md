@@ -28,34 +28,40 @@ sudo apt-get install make
 
 ## Installation 🔧
 
-Open your cmd, go to the PATH where you have downloaded the files and type make.
+Open your cmd, go to the directory where you have downloaded the files typing this:
 
 ```
 cd Documents/Projects/source  for example
-
 ```
+Now you have to compile them, typing:
 ```
-make
+make server
+```
+And:
+```
+make client
+```
+Or if you prefer you can type:
+```
+make all
 ```
 
 ## Deployment 📦
 
-If you want to prove other ports you can, doing that:
+Then open two terminals and go to the directory where you have the files compiled.
 
-```
-cd Documents/Projects/source  for example
-
-```
-It's very important to run the server before de client. You can run this on the same machine on differents terminals.
+It's very important to run the server before de client. At the first terminal run the server:
 ```
 ./server 8080
-
 ```
+On the second the client:
 ```
 ./client 127.0.0.1 8080
-
 ```
-As you can see the format is ./server port_number and ./client hostname port_number
+When you do this you recieve a message on the server and on the client side saying that it was successfully or not in case of error.
+Once connected you can send messages to the host until you type "Exit" to get disconnected.
+
+As you can see the format is ./server port_number and ./client hostname port_number so you can try whatever you want.
 
 ## Build with 🛠️
 
