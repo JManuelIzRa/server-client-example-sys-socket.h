@@ -27,7 +27,7 @@ sudo apt-get update
 ```
 sudo apt-get install make
 ```
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## Installation 🔧
 
@@ -49,7 +49,7 @@ Or if you prefer you can type:
 make all
 ```
 These commands works for both projects.
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## Deployment 📦
 
@@ -69,19 +69,19 @@ Once connected you can send messages to the host until you type "Exit" to get di
 As you can see the format is ./server port_number and ./client hostname port_number so you can try whatever you want.
 
 **NOTE**: with Simple TCP example the maximum number of terminals are two, however for Multiclient's example you can execute whatever you want.
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## How it works 🔨
 
 
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## Build with 🛠️
 
 * [VS Code](https://code.visualstudio.com/) - Code editor used
 * [Creative Commons](https://creativecommons.org/) - Used to choose the license
 
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## License 📄
 
@@ -89,14 +89,14 @@ This project is licensed under the [CC0 1.0 Universal](LICENSE.md)
 Creative Commons License - see the [LICENSE.md](LICENSE.md) file for
 details
 
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 ## Acknowledgments 📢
 * https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
 * https://www.binarytides.com/server-client-example-c-sockets-linux/
 * https://pubs.opengroup.org/onlinepubs/009696899/basedefs/sys/socket.h.html
 
-[Return to summary](#summary-)
+[Return to summary](#summary)
 
 
 
