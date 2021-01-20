@@ -32,6 +32,8 @@ int main(int argc, char**argv)
     
     struct sockaddr_in server_address;
 
+    pid_t child_pid;
+
     server_address.sin_family=AF_INET;
     server_address.sin_addr.s_addr=INADDR_ANY;
     server_address.sin_port=htons(port_number);
@@ -54,109 +56,97 @@ int main(int argc, char**argv)
         exit(EXIT_FAILURE);
     }
 
-    printf("Estoy escuchando...\n");
 
     //Using that function we make the socket passive, it means that it will be used to accept incoming connections requests
     //Their parametres are the socket and the backlog, which defines the maximum of the queue of pending connections
     //Usando esta funcion el socket se vuelve pasivo, esto significa que solo será usasda para aceptar peticiones the conexion
     //Sus parametros son el socket y un backlog, que define la cantidad maxima de peticiones de conexion pendientes en cola
-    listen(server, 100);
+    if(listen(server, 100)!=0)
+    {
+        error("Error listening");
+    }
+
+    printf("Listening. Escuchando...\n");
+
+    
 
     struct sockaddr_in client_address;
     unsigned int address_size;
 
-    //accept() function is used to extract the first connecction request on the queue of pending connections for the listening socket
-    //It creates a new connected socket without affecting the main socket wich is still listening 
-    //La funcion accept() es usada para extraer la primera peticion de conexion de la cola de conexiones pendientes del socket que está escuchando
-    //Crea un socket conectado nuevo sin afectar al socket principal, el cual sigue escuchando
-    int client = accept(server, (void*)&client_address, &address_size);
-
-
-    printf("Recibi una conexion en %d!!\n", client);
-
-
-    //This block commented is an example of how to recieve messages from the client when we know the size of the package sent
-    //Este bloque comentado es una ejemplo de como recivir mensajes del cliente cuando sabemos el tamaño de paquete enviado
-    /*char * buffer = malloc(5);
-
-    int bytesRecibidos = recv(client, buffer, 4, 0);//recv(client, buffer, 4, MSG_WAITALL); No recive el mensaje hasta que el buffer no este lleno
-
-    if(bytesRecibidos < 0)
-    {
-        error("It get disconnected. Se ha desconectado");
-    }
-
-    buffer[bytesRecibidos] = '\0';
-
-    printf("Me llegaron %d bytes con %s\n", bytesRecibidos, buffer);*/
-
- 
-    //This block commented is an example of how to recieve messages from the client when we DONT know the size of the package sent
-    //Este bloque comentado es una ejemplo de como recivir mensajes del cliente cuando NO sabemos el tamaño de paquete enviado
- 
- /* uint32_t package_size;
-    recv(client, &package_size, 4, 0);
-
-    char*buffer = malloc(package_size);
-
-    recv(client, buffer, package_size, MSG_WAITALL);*/
-  
-    //Uncomment this if you want to use recv(). Descomenta esto si quieres usar recv()
-    //uint32_t package_size; 
-    //char* buffer = malloc(package_size);
-
     char*buffer = malloc(1024);
     int n;
 
-    //When the client get connected we sent him this message
-    //Cuando el cliente se conecta le mandamos este mensaje
-    send(client, "Welcome to the server!!\nType Exit to stop the connection\nType your message:\n", 78, 0);
+    int client;
 
+    
     //We do this loop to recieve message and send a confirmation messages until the client type "Exit", then we leave the loop and disconnect the client and the main socket
     //Hacemos este bucle para recibir mensaje y mandar mensajes de confirmacion hasta que el cliente escribe "Exit", entonces saldremos del bucle y se desconectara el socket cliente y el main.
-    while(strcmp(buffer,"Exit")!=0)
+    while(1)
     {
-        bzero(buffer, 256);
+        //accept() function is used to extract the first connecction request on the queue of pending connections for the listening socket
+        //It creates a new connected socket without affecting the main socket wich is still listening 
+        //La funcion accept() es usada para extraer la primera peticion de conexion de la cola de conexiones pendientes del socket que está escuchando
+        //Crea un socket conectado nuevo sin afectar al socket principal, el cual sigue escuchando
+        client = accept(server, (void*)&client_address, &address_size);
+
+        if(client < 0)
+        {
+            error("Error creating client's socket");
+        }
+
+        printf("Connection accepted from %s:%d. Conexion aceptada desde %s:%d!!\n", 
+        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), 
+        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+
+        //When the client get connected we sent him this message
+        //Cuando el cliente se conecta le mandamos este mensaje
+        send(client, "Welcome to the server!!\nType Exit to stop the connection\nType your message:\n", 78, 0);
         
-        /*
-        recv(client, buffer, package_size, 0);
-        */
-
-       
-        n = read(client, buffer, 255);
-
-        //Error control
-        if(n < 0)
+        if((child_pid = fork())==0)
         {
-            error("Error reading from socket. Error leyendo del socket");
+            //close(server);
+
+            while(1)
+            {
+                bzero(buffer, 256);
+
+                recv(client, buffer, 1024, 0);
+
+                printf("This is the message. Este es el mensaje: %s\n", buffer);
+
+                if(strcmp(buffer,"Exit")==0 || strcmp(buffer,"Exit_all")==0)
+                {
+                    n = write(client, "Ending connection. Finalizando conexion...\n",45);
+                    
+                    if(close(client)!=0)
+                    {
+                        error("Error closing client socket. Socket client cerrado incorrectamente.");
+                    }
+
+                    break;
+
+                }
+                else
+                {
+                    n = write(client, "Received. Recibido\n", 21);
+                }
+
+                if(n < 0)
+                {
+                    error("Error writing to the socket· Error escribiendo al socket");
+                }
+            }
+        }
+        else if(child_pid == -1)
+        {
+            error("Fork error.");
         }
         
-
-        printf("This is the message. Este es el mensaje: %s\n", buffer);
-
-        if(strcmp(buffer,"Exit")==0)
-        {
-           n = write(client, "Ending connection. Finalizando conexion...\n",45);
-        }
-        else
-        {
-            n = write(client, "Received. Recibido\n", 21);
-        }
-
-        if(n < 0)
-        {
-            error("Error writing to the socket· Error escribiendo al socket");
-        }
-
-        //send(client,"Recibido\n",11,0);
     }
     
     free(buffer);
 
-    if(close(client)!=0)
-    {
-        error("Error closing client socket. Socket client cerrado incorrectamente.");
-    }
+    
 
     if(close(server)!=0)
     {
