@@ -8,7 +8,7 @@
 
 //error function to print an error message and to finish the execution of the program
 //its not necessary at all, its only for simplify and optimize
-//Funcion error para imprimir todos los mensajes de error y para finalizar la ejecución del programa
+//Funcion error para imprimir todos los messages de error y para finalizar la ejecución del programa
 //No es realmente necesaria pero simplifica el codigo y lo optimiza
 void error(const char*message)
 {
@@ -67,19 +67,22 @@ int main(int argc, char**argv)
 
     printf("%s", buffer);
     
-    char mensaje[1000];
+    char message[1024];
     
     //We do this loop to send and recieve messages until we type "Exit", then we leave the loop and get disconnected from the server
     //Hacemos este bucle para mandar y recivir mensajes hasta que escribimos "Exit", entonces saldremos del bucle y nos desconectaremos del servidor
-    while(strcmp(mensaje,"Exit")!=0)
+    while(strcmp(message,"Exit")!=0 && strcmp(message,"Exit_all")!=0)
     {
         //Sending messages block
-        //Bloque para mandar mensajes
+        //Bloque para mandar messages
         bzero(buffer, 256);
 
-        scanf("%s", mensaje);
+        scanf("%s", message);
 
-        send(client, mensaje, strlen(mensaje),0);
+        if(send(client, message, strlen(message),MSG_CONFIRM)<0)
+        {
+            error("Error sending messages to the server. Error enviando mensajes al servidor.");
+        }
 
         //Recieving messages block
         //Bloque para recivir mensajes

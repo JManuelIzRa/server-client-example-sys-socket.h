@@ -4,8 +4,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-
+#include <signal.h>
 #include <sys/types.h>
+
+int turn_off_signal_recieved = 0;
+
 
 //error function to print an error message and to finish the execution of the program
 //its not necessary at all, its only for simplify and optimize
@@ -17,6 +20,12 @@ void error(const char*message)
     exit(EXIT_FAILURE);
 }
 
+void signalHandler(int signal)
+{
+    printf("Recieved signal to turn off the server. Señal para apagar el servidor recibida.\n");
+
+    turn_off_signal_recieved = 1;
+}
 
 int main(int argc, char**argv)
 {
@@ -78,70 +87,85 @@ int main(int argc, char**argv)
 
     int client;
 
-    
+    signal(SIGUSR1, signalHandler);
+
+
     //We do this loop to recieve message and send a confirmation messages until the client type "Exit", then we leave the loop and disconnect the client and the main socket
     //Hacemos este bucle para recibir mensaje y mandar mensajes de confirmacion hasta que el cliente escribe "Exit", entonces saldremos del bucle y se desconectara el socket cliente y el main.
-    while(1)
+    while(turn_off_signal_recieved == 0)
     {
-        //accept() function is used to extract the first connecction request on the queue of pending connections for the listening socket
-        //It creates a new connected socket without affecting the main socket wich is still listening 
-        //La funcion accept() es usada para extraer la primera peticion de conexion de la cola de conexiones pendientes del socket que está escuchando
-        //Crea un socket conectado nuevo sin afectar al socket principal, el cual sigue escuchando
-        client = accept(server, (void*)&client_address, &address_size);
-
-        if(client < 0)
-        {
-            error("Error creating client's socket");
-        }
-
-        printf("Connection accepted from %s:%d. Conexion aceptada desde %s:%d!!\n", 
-        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), 
-        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
-
-        //When the client get connected we sent him this message
-        //Cuando el cliente se conecta le mandamos este mensaje
-        send(client, "Welcome to the server!!\nType Exit to stop the connection\nType your message:\n", 78, 0);
         
-        if((child_pid = fork())==0)
-        {
-            //close(server);
+        
+            //accept() function is used to extract the first connecction request on the queue of pending connections for the listening socket
+            //It creates a new connected socket without affecting the main socket wich is still listening 
+            //La funcion accept() es usada para extraer la primera peticion de conexion de la cola de conexiones pendientes del socket que está escuchando
+            //Crea un socket conectado nuevo sin afectar al socket principal, el cual sigue escuchando
+            client = accept(server, (void*)&client_address, &address_size);
 
-            while(1)
+            if(client < 0)
             {
-                bzero(buffer, 256);
+               error("Error creating client's socket");
+            }
 
-                recv(client, buffer, 1024, 0);
+            printf("Connection accepted from %s:%d. Conexion aceptada desde %s:%d!!\n", 
+            inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), 
+            inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
-                printf("This is the message. Este es el mensaje: %s\n", buffer);
+            //When the client get connected we sent him this message
+            //Cuando el cliente se conecta le mandamos este mensaje
+            send(client, "Welcome to the server!!\nType Exit to stop the connection\nType your message:\n", 78, 0);
+        
+            if((child_pid = fork())==0)
+            {
+                //close(server);
 
-                if(strcmp(buffer,"Exit")==0 || strcmp(buffer,"Exit_all")==0)
+                while(1)
                 {
-                    n = write(client, "Ending connection. Finalizando conexion...\n",45);
-                    
-                    if(close(client)!=0)
+                    bzero(buffer, 256);
+
+                    recv(client, buffer, 1024, 0);
+
+                    printf("This is the message. Este es el mensaje: %s\n", buffer);
+
+                    if(strcmp(buffer,"Exit")==0 || strcmp(buffer,"Exit_all")==0)
                     {
-                        error("Error closing client socket. Socket client cerrado incorrectamente.");
+                        n = write(client, "Ending connection. Finalizando conexion...\n",45);
+                    
+                        if(close(client)!=0)
+                        {
+                            error("Error closing client socket. Socket client cerrado incorrectamente.");
+                        }
+                    
+                        if(strcmp(buffer,"Exit_all")==0)
+                        {
+                           kill(getppid(),SIGUSR1);
+                        }
+                    
+                        exit(EXIT_SUCCESS);
+
+                    }
+                    else
+                    {
+                        n = write(client, "Received. Recibido\n", 21);
                     }
 
-                    break;
-
-                }
-                else
-                {
-                    n = write(client, "Received. Recibido\n", 21);
-                }
-
-                if(n < 0)
-                {
-                    error("Error writing to the socket· Error escribiendo al socket");
+                    if(n < 0)
+                    {
+                        error("Error writing to the socket· Error escribiendo al socket");
+                    }
                 }
             }
-        }
-        else if(child_pid == -1)
-        {
-            error("Fork error.");
-        }
+            else if(child_pid == -1)
+            {
+                error("Fork error.");
         
+            }
+        
+        if(turn_off_signal_recieved==1)
+        {
+            kill(child_pid, SIGKILL);
+        }
+    
     }
     
     free(buffer);
