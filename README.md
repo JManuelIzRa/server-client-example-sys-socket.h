@@ -3,14 +3,16 @@ At the source folder you would find an example of a simple TCP server/client exa
 
 ## Summary
 
-- [Getting Started](#getting--started)
-- [Pre-installation](#pre--installation)
-- [Installation](#installation)
-- [Deployment](#deployment)
-- [Build with](#build--with)
-- [License](#license)
+- [Getting Started](##getting-started-🚀)
+- [Pre-installation](##pre-installation-📋)
+- [Installation](##installation-🔧)
+- [Deployment](##deployment-📦)
+- [How it works](##how-it-works-🔨) 
+- [Build with](##build-with-🛠️)
+- [License](##license-📄)
+- [Acknowledgments](##acknowledgments-📢)
 
-## Getting started 🚀
+## [Getting started 🚀](##summary)
 
 Download the source's folder on your computer.
 
