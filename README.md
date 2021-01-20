@@ -49,6 +49,7 @@ Or if you prefer you can type:
 make all
 ```
 These commands works for both projects.
+
 [Return to summary](#summary)
 
 ## Deployment 📦
@@ -69,6 +70,7 @@ Once connected you can send messages to the host until you type "Exit" to get di
 As you can see the format is ./server port_number and ./client hostname port_number so you can try whatever you want.
 
 **NOTE**: with Simple TCP example the maximum number of terminals are two, however for Multiclient's example you can execute whatever you want.
+
 [Return to summary](#summary)
 
 ## How it works 🔨
