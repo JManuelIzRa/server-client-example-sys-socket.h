@@ -1,13 +1,13 @@
 # Server/client example using <sys/socket.h>
-A TCP server/client example using sys/socket.h
+At the source folder you would find an example of a simple TCP server/client example, which only accepts one client, and a Multiclient TCP server/client example using the library <sys/socket.h>
 
 ## Summary
 
-- [Getting Started](#getting-started)
-- [Pre-installation](#pre-installation)
+- [Getting Started](#getting--started)
+- [Pre-installation](#pre--installation)
 - [Installation](#installation)
 - [Deployment](#deployment)
-- [Build with](#build-with)
+- [Build with](#build--with)
 - [License](#license)
 
 ## Getting started 🚀
@@ -31,7 +31,7 @@ sudo apt-get install make
 Open your cmd, go to the directory where you have downloaded the files typing this:
 
 ```
-cd Documents/Projects/source  for example
+cd Documents/Projects/source/Simple\ TCP for example
 ```
 Now you have to compile them, typing:
 ```
@@ -45,10 +45,11 @@ Or if you prefer you can type:
 ```
 make all
 ```
+These commands works for both projects.
 
 ## Deployment 📦
 
-Then open two terminals and go to the directory where you have the files compiled.
+Then open some terminals and go to the directory where you have the files compiled.
 
 It's very important to run the server before de client. At the first terminal run the server:
 ```
@@ -62,6 +63,12 @@ When you do this you recieve a message on the server and on the client side sayi
 Once connected you can send messages to the host until you type "Exit" to get disconnected.
 
 As you can see the format is ./server port_number and ./client hostname port_number so you can try whatever you want.
+
+**NOTE**: with Simple TCP example the maximum number of terminals are two, however for Multiclient's example you can execute whatever you want.
+
+## How it works 🔨
+
+
 
 ## Build with 🛠️
 
