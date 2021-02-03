@@ -36,9 +36,9 @@ void*handle_connection(void*p_client_socket)
 
     if(fp==NULL)
     {
-        error("Error opening file");
-
+        send(client_socket, "Exit", 5, 0);
         close(client_socket);
+        error("Error opening file");
 
         return NULL;
     }
