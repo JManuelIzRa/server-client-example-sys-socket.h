@@ -140,7 +140,11 @@ int main(int argc, char**argv)
                         {
                            kill(getppid(),SIGUSR1);
                         }
-                    
+
+                        printf("Disconnected from %s:%d. Desconectado de %s:%d!!\n", 
+                        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), 
+                        inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+
                         exit(EXIT_SUCCESS);
 
                     }
